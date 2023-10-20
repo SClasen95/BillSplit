@@ -26,7 +26,6 @@ function App(): JSX.Element {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="CreatePayers" component={CreatePayers} />
         <Stack.Screen name="CreateBill" component={CreateBill} />
-        <Stack.Screen name="Summary" component={Summary} />
       </Stack.Navigator>
     </NavigationContainer>
   );

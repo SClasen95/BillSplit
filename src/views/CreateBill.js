@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Button from "../components/Button";
 import { colors } from "../utils/colors";
 import { useRoute } from "@react-navigation/native";
 import DropDownList from "../components/DropDownList";
 import Input from "../components/Input";
-import { FlatList } from "react-native-gesture-handler";
+import SummaryItem from "../components/SummaryItem";
+import Separator from "../components/Separator";
+import Header from "../components/Header";
 
 const CreateBill = ({ navigation }) => {
   const route = useRoute();
@@ -36,41 +38,59 @@ const CreateBill = ({ navigation }) => {
     setCantidad("1"); // Reset cantidad to "0"
   };
 
-  const onNextPress = () => {
-    
-    const data = billItems;
-    navigation.navigate('Summary', { data });
-   
-  };
-
   const onAddPress = () => {
     // Find the selected product from productList
     const selectedProduct = productList.find((item) => item.name === product);
-
+  
     if (selectedProduct) {
-      // Create a new bill item object
-      const newBillItem = {
-        name: name,
-        cantidad: cantidad,
-        product: product,
-        price: selectedProduct.price,
-      };
-      // Add the new bill item to billItems array
-      setBillItems([...billItems, newBillItem]);
-      
+      if (name === "") {
+        // Calculate the price per person
+        const newPrice = selectedProduct.price / names.length;
+        // Create a new sharedBillItem for each participant
+        const sharedBillItems = names.map((item) => ({
+          name: item,
+          cantidad: cantidad,
+          product: product,
+          price: newPrice,
+        }));
+        // Update the billItems array with the new sharedBillItems
+        setBillItems([...billItems, ...sharedBillItems]);
+      } else {
+        // Create a new bill item for a single payer
+        const newBillItem = {
+          name: name,
+          cantidad: cantidad,
+          product: product,
+          price: selectedProduct.price,
+        };
+        // Update the billItems array with the newBillItem
+        setBillItems([...billItems, newBillItem]);
+      }
       // Reset the form
       resetForm();
     }
   };
 
+  const [names, setNames] = useState([]);
+
+  useEffect(() => {
+    createNamesArray();
+  }, [billItems]);
+
+  const filterBillItemsByName = (filterName) => {
+    return billItems.filter((item) => item.name === filterName);
+  };
+
+  const createNamesArray = () => {
+    const uniqueNames = [...new Set(billItems.map((item) => item.name))];
+    setNames(uniqueNames);
+  };
+
   const cantidadOptions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.header}>
-
-        <Text style={styles.title}>Add the products to each person</Text>
-      </View>
+    <View style={styles.container}>
+      <Header value={"Create Bills"} />
       <View style={styles.form}>
         <Input
           value={name}
@@ -97,41 +117,39 @@ const CreateBill = ({ navigation }) => {
             />
           </View>
         </View>
-        <Button
-          title={"Add"}
-          onPress={onAddPress}
-          style={{ backgroundColor: colors.orange }}
-        />
-        <FlatList
-          style={styles.nameList}
-          data={billItems}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <Text style={styles.name}>{`${item.name}:  ${item.product} - $${item.price} x${item.cantidad}`}</Text>
-          )}
-        />
+        <Separator />
+        <ScrollView>
+          <View style={styles.summaryContainer}>
+            {names.map((item) => (
+              <SummaryItem key={item} value={filterBillItemsByName(item)} />
+            ))}
+          </View>
+        </ScrollView>
+        <View style={styles.addButton}>
+          <Button
+            title={"Add"}
+            onPress={onAddPress}
+            style={{ backgroundColor: colors.orange }}
+          />
+        </View>
       </View>
-      <View style={styles.next}>
-        <Button title={"Next"} onPress={onNextPress} />
-      </View>
-    </ScrollView>
+    </View>
   );
 };
 
 export default React.memo(CreateBill);
 
 const styles = StyleSheet.create({
-  title: {
-    color: colors.blue,
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: 30,
-    marginLeft: 30,
+  container: {
+    flexGrow: 1,
   },
   form: {
     marginHorizontal: 24,
     marginTop: 14,
-    flex:1
+    flex: 1,
+  },
+  summaryContainer: {
+    marginTop: 12,
   },
   productInfo: {
     flexDirection: "row",
@@ -154,11 +172,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     textAlign: "center",
     fontSize: 18,
-  },
-  next: {
-    marginHorizontal: 24,
-  },
-  container: {
-    flexGrow: 1,
   },
 });

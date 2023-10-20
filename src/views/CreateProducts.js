@@ -4,6 +4,7 @@ import Button from "../components/Button";
 import { colors } from "../utils/colors";
 import Input from "../components/Input";
 import { FlatList } from "react-native-gesture-handler";
+import Header from "../components/Header";
 
 const CreateProducts = ({ navigation }) => {
   const [productName, setProductName] = useState("");
@@ -41,10 +42,7 @@ const CreateProducts = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Add products</Text>
-
-      </View>
+      <Header value={"Add products"}/>
       <View style={styles.form}>
         <Input
           value={productName}
@@ -90,13 +88,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 25,
     marginHorizontal: 16,
-  },
-  title: {
-    color: colors.blue,
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: 30,
-    marginLeft: 30,
   },
   nameList: {
     width: 200,

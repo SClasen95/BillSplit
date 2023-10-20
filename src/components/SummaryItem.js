@@ -15,7 +15,6 @@ const SummaryItem = ({value}) => {
         })
     }
 
-    console.log(value)
     return (
     <View style={styles.container}>
         <View style={styles.headerContainer}>
