@@ -68,7 +68,6 @@ const CreateBill = ({ navigation }) => {
             item.product === newBillItem.product &&
             item.name === newBillItem.name
         );
-        console.log(existingProduct);
 
         if (existingProduct) {
           existingProduct.cantidad++;
@@ -101,7 +100,7 @@ const CreateBill = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header value={"Create Bills"} />
+      <Header value={"Create Bills"} onBackPress={()=>navigation.goBack()}/>
       <View style={styles.form}>
         <Input
           value={name}

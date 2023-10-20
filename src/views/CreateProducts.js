@@ -31,6 +31,7 @@ const CreateProducts = ({ navigation }) => {
     }
   };
 
+
   const onNextPress = () => {
     if (productList.length > 0) {
       const data = productList;
@@ -42,7 +43,7 @@ const CreateProducts = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header value={"Add products"}/>
+      <Header value={"Add products"} onBackPress={()=>navigation.goBack()}/>
       <View style={styles.form}>
         <Input
           value={productName}
