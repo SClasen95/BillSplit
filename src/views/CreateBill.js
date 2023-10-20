@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Button from "../components/Button";
 import { colors } from "../utils/colors";
 import { useRoute } from "@react-navigation/native";
@@ -16,7 +16,7 @@ const CreateBill = ({ navigation }) => {
 
   const [name, setName] = useState("");
   const [product, setProduct] = useState("");
-  const [cantidad, setCantidad] = useState("0"); // Initialize cantidad to "0"
+  const [cantidad, setCantidad] = useState("1"); // Initialize cantidad to "0"
   const [billItems, setBillItems] = useState([]);
 
   const onDropDownChange = (opt) => {
@@ -33,7 +33,14 @@ const CreateBill = ({ navigation }) => {
 
   const resetForm = () => {
     setProduct("");
-    setCantidad("0"); // Reset cantidad to "0"
+    setCantidad("1"); // Reset cantidad to "0"
+  };
+
+  const onNextPress = () => {
+    
+    const data = billItems;
+    navigation.navigate('Summary', { data });
+   
   };
 
   const onAddPress = () => {
@@ -48,24 +55,26 @@ const CreateBill = ({ navigation }) => {
         product: product,
         price: selectedProduct.price,
       };
-
       // Add the new bill item to billItems array
       setBillItems([...billItems, newBillItem]);
-
+      
       // Reset the form
       resetForm();
     }
   };
 
-  // Define cantidad (quantity) options, including "0"
-  const cantidadOptions = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  const cantidadOptions = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add the products to each person</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.header}>
+
+        <Text style={styles.title}>Add the products to each person</Text>
+      </View>
       <View style={styles.form}>
         <Input
           value={name}
+          placeholder={"Leave empty if shared amongst everyone."}
           label={"Payer:"}
           onChangeText={(text) => onPayerChange(text)}
         />
@@ -93,16 +102,19 @@ const CreateBill = ({ navigation }) => {
           onPress={onAddPress}
           style={{ backgroundColor: colors.orange }}
         />
+        <FlatList
+          style={styles.nameList}
+          data={billItems}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <Text style={styles.name}>{`${item.name}:  ${item.product} - $${item.price} x${item.cantidad}`}</Text>
+          )}
+        />
       </View>
-      <FlatList
-        style={styles.nameList}
-        data={billItems}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <Text style={styles.name}>{`${item.name}:  ${item.product} - $${item.price} x${item.cantidad}`}</Text>
-        )}
-      />
-    </View>
+      <View style={styles.next}>
+        <Button title={"Next"} onPress={onNextPress} />
+      </View>
+    </ScrollView>
   );
 };
 
@@ -119,16 +131,17 @@ const styles = StyleSheet.create({
   form: {
     marginHorizontal: 24,
     marginTop: 14,
+    flex:1
   },
   productInfo: {
     flexDirection: "row",
   },
   productInput: {
-    width:225,
-    marginRight: 8,    
+    width: 225,
+    marginRight: 8,
   },
   cantInput: {
-    flex:1,
+    flex: 1,
     marginRight: 8,
   },
   nameList: {
@@ -141,5 +154,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     textAlign: "center",
     fontSize: 18,
+  },
+  next: {
+    marginHorizontal: 24,
+  },
+  container: {
+    flexGrow: 1,
   },
 });

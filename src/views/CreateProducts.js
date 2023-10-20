@@ -41,7 +41,10 @@ const CreateProducts = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Add products</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Add products</Text>
+
+      </View>
       <View style={styles.form}>
         <Input
           value={productName}

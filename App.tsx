@@ -9,6 +9,7 @@ import React from 'react';
 import Splash from './src/views/Splash';
 import CreateBill from './src/views/CreateBill';
 import CreatePayers from './src/views/CreateProducts';
+import Summary from './src/views/Summary';
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -25,6 +26,7 @@ function App(): JSX.Element {
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="CreatePayers" component={CreatePayers} />
         <Stack.Screen name="CreateBill" component={CreateBill} />
+        <Stack.Screen name="Summary" component={Summary} />
       </Stack.Navigator>
     </NavigationContainer>
   );
