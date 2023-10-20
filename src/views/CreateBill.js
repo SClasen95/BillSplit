@@ -41,7 +41,7 @@ const CreateBill = ({ navigation }) => {
   const onAddPress = () => {
     // Find the selected product from productList
     const selectedProduct = productList.find((item) => item.name === product);
-  
+
     if (selectedProduct) {
       if (name === "") {
         // Calculate the price per person
@@ -63,8 +63,19 @@ const CreateBill = ({ navigation }) => {
           product: product,
           price: selectedProduct.price,
         };
-        // Update the billItems array with the newBillItem
-        setBillItems([...billItems, newBillItem]);
+        var existingProduct = billItems.find(
+          (item) =>
+            item.product === newBillItem.product &&
+            item.name === newBillItem.name
+        );
+        console.log(existingProduct);
+
+        if (existingProduct) {
+          existingProduct.cantidad++;
+        } else {
+          // Update the billItems array with the newBillItem
+          setBillItems([...billItems, newBillItem]);
+        }
       }
       // Reset the form
       resetForm();
